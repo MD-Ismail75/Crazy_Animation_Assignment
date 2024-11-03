@@ -7,152 +7,178 @@ class AnimationWork extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var size = Get.size;
-    // Move RxBool to a member variable
-    final RxBool menuClicked = false.obs;
+    final RxBool expanclick  = false.obs;
 
-    return Scaffold(
+    return Obx(()=>Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(21.0),
+          padding: const EdgeInsets.all(17.0),
           child: SingleChildScrollView(
-            child: Column(
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    menuClicked.value = !menuClicked.value;
-                  },
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(menuClicked.value?"RIPPLES":"expand",
-                      style: TextStyle(
-                        fontWeight: FontWeight.w900,
-                        fontSize: 31,
+            child: SizedBox(
+              width: size.width,
+              height: size.height,
+              child:Stack(
+                alignment: Alignment.center,
+                children: [
+                  AnimatedPositioned(
+                    duration: const Duration(milliseconds: 355),
+                    curve: Curves.easeOut,
+                    top:expanclick.value?size.width > size.height?size.height*.21+17 :size.width*.21+17:size.width > size.height?0:0,
+                    // top:expanBtn.value?size.width*.21+17 : 0,
+                    left:expanclick.value?size.width > size.height?size.height*.5-51: size.width*.5-51:size.width > size.height?0:0,
+                    child: GestureDetector(
+                      onTap: (){
+                        expanclick.value = true;
+                      },
+                      child: Text(expanclick.value?"RIPPLE":"Expan",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w900,
+                          fontSize:size.width > size.height?size.height*.065: size.width*.065,
+                        ),
                       ),
                     ),
                   ),
-                ),
-                SizedBox(height: size.width * .5),
-                SizedBox(
-                  width: size.width,
-                  height: size.width,
-                  child: Obx(
-                        () => Stack(
+
+
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 355),
+                    curve: Curves.easeOut,
+                    // width:expanBtn.value? size.width: size.width*.45,
+                    width:expanclick.value?size.width > size.height?size.width: size.width :size.width > size.height?size.height*.45: size.width*.45,
+                    // height:expanBtn.value? size.width*.6: size.width*.45,
+                    height:expanclick.value?size.width > size.height?size.height*0.6: size.width*.6:size.width > size.height?size.height*.45: size.width*.45,
+                    decoration: BoxDecoration(
+                      color: Colors.grey,
+                      borderRadius:expanclick.value?BorderRadius.circular(55): BorderRadius.circular(1000),
+                    ),
+                    child: Stack(
+                      alignment: Alignment.center,
                       children: [
-                        Align(
-                          alignment: Alignment.center,
-                          child: Padding(
-                            padding: EdgeInsets.all(menuClicked.value ? 25 : 0),
-                            child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 355),
-                              curve: Curves.easeOut,
-                              width: menuClicked.value ? size.width * 0.8 : size.width * 0.60,
-                              height: menuClicked.value ? size.width * 0.8 : size.width * 0.58,
-                              decoration: BoxDecoration(
-                                color: Colors.grey,
-                                borderRadius: BorderRadius.circular(menuClicked.value ? 90 : 120),
+                        AnimatedOpacity(
+                          duration:const Duration(milliseconds: 355),
+                          curve: Curves.easeOut,
+                          opacity: expanclick.value?1:0,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text.rich(
+                                TextSpan(
+                                    children: [
+                                      WidgetSpan(
+                                          child: Icon(Icons.shopping_cart,color: Colors.white,size: size.width*.04,)
+                                      ),
+                                      TextSpan(
+                                          text: "  item in cart",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: size.width*.035,
+                                              height: 0,
+                                              fontWeight: FontWeight.w900
+                                          )
+                                      )
+                                    ]
+                                ),
+
                               ),
-                              child: AnimatedOpacity(
-                                duration: const Duration(milliseconds: 355),
-                                    curve: Curves.easeOut,
-                                   opacity: menuClicked.value?1:0,
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    _buildRichText(size, Icons.shopping_cart, "items in cart"),
-                                    _buildRichText(size, Icons.history_toggle_off, "purchase history"),
-                                    _buildRichText(size, Icons.settings, "app settings"),
-                                  ],
+                              Padding(
+                                padding: const EdgeInsets.all(17.0),
+                                child: Text.rich(
+                                  TextSpan(
+                                      children: [
+                                        WidgetSpan(
+                                            child: Icon(Icons.history_toggle_off_outlined,color: Colors.white,size: size.width*.04,)
+                                        ),
+                                        TextSpan(
+                                            text: "  purchase history",
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: size.width*.035,
+                                                height: 0,
+                                                fontWeight: FontWeight.w900
+                                            )
+                                        )
+                                      ]
+                                  ),
+
                                 ),
                               ),
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          top: menuClicked.value ? size.width * 0.1 : size.width * 0.26,
-                          left: menuClicked.value ? size.width * 0.5 : size.width * 0.20,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(120),
-                            child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 355),
-                              curve: Curves.easeOut,
-                              width: menuClicked.value ? size.width * 0.16 : size.width * 0.50,
-                              height: menuClicked.value ? size.width * 0.16 : size.width * 0.48,
-                              decoration: BoxDecoration(
-                                color: const Color(0xff5e5c5c),
-                                borderRadius: BorderRadius.circular(120),
+                              Text.rich(
+                                TextSpan(
+                                    children: [
+                                      WidgetSpan(
+                                          child: Icon(Icons.settings_rounded,color: Colors.white,size: size.width*.04,)
+                                      ),
+                                      TextSpan(
+                                          text: "  app setting",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: size.width*.035,
+                                              height: 0,
+                                              fontWeight: FontWeight.w900
+                                          )
+                                      )
+                                    ]
+                                ),
+
                               ),
-                              // child: Center(
-                              //   child: Text(
-                              //     menuClicked.value ? "RIPPLES," : "",
-                              //     style: TextStyle(
-                              //       color: Colors.white,
-                              //       fontSize: 15,
-                              //       fontWeight: FontWeight.w500,
-                              //     ),
-                              //   ),
-                              // ),
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          bottom: menuClicked.value ? size.width * 0.1 : size.width * 0.31,
-                          right: menuClicked.value ? size.width * 0.5 : size.width * 0.25,
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 355),
-                            curve: Curves.easeOut,
-                            width: menuClicked.value ? size.width * 0.16 : size.width * 0.40,
-                            height: menuClicked.value ? size.width * 0.16 : size.width * 0.38,
-                            decoration: BoxDecoration(
-                              color: Colors.black,
-                              borderRadius: BorderRadius.circular(120),
-                            ),
-                            child: GestureDetector(
-                              onTap: () {
-                                menuClicked.value = !menuClicked.value;
-                              },
-                              child: Center(
-                                child: menuClicked.value
-                                    ? Icon(Icons.add_circle_outline, color: Colors.white)
-                                    : null,
-                              ),
-                            ),
+                            ],
                           ),
                         ),
                       ],
                     ),
                   ),
-                ),
-              ],
+
+                  AnimatedPositioned(
+                    duration: const Duration(milliseconds: 355),
+                    curve: Curves.easeOut,
+                    // top: expanBtn.value?0:size.height*.5-size.width*.38*.5,
+                    top:expanclick.value?size.width > size.height?0:0:size.width > size.height?size.height*.5-size.height*.38*.5: size.height*.5-size.width*.38*.5,
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 355),
+                      curve: Curves.easeOut,
+                      // width:expanBtn.value?size.width*.21:size.width*.38,
+                      width:expanclick.value?size.width > size.height?size.height*.21: size.width*.21:size.width > size.height?size.height*.38: size.width*.38,
+                      // height:expanBtn.value?size.width*.21: size.width*.38,
+                      height:expanclick.value?size.width > size.height?size.height*.21: size.width*.21:size.width > size.height?size.height*.38: size.width*.38,
+                      decoration: BoxDecoration(
+                        color: Color(0xff3d3b3b),
+                        borderRadius: BorderRadius.circular(1000),
+                      ),
+                    ),
+                  ),
+                  AnimatedPositioned(
+                      duration: const Duration(milliseconds: 355),
+                      curve: Curves.easeOut,
+                      // bottom:expanBtn.value?35: size.height*.5-size.width*.31*.5,
+                      bottom:expanclick.value?35: size.width > size.height?size.height*.5-size.height*.31*.5:size.height*.5-size.width*.31*.5,
+                      // right:expanBtn.value?0:size.width*.5-size.width*.31*.5-17,
+                      right: expanclick.value?0:size.width > size.height?size.width*.5-size.height*.31*.5-17:size.width*.5-size.width*.31*.5-17,
+                      child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 355),
+                          curve: Curves.easeOut,
+                          // width:expanBtn.value?size.width*.15: size.width*.31,
+                          width:expanclick.value?size.width > size.height?size.height*.15: size.width*.15:size.width > size.height?size.height*.31: size.width*.31,
+                          // height:expanBtn.value?size.width*.15: size.width*.31,
+                          height:expanclick.value?size.width > size.height?size.height*.15: size.width*.15:size.width > size.height?size.height*.31: size.width*.31,
+                          decoration: BoxDecoration(
+                            color: Colors.black,
+                            borderRadius: BorderRadius.circular(1000),
+                          ),
+                          child: GestureDetector(
+                              onTap: (){
+                                expanclick.value=false;
+                              },
+                              child:expanclick.value? Icon(Icons.restart_alt_sharp,color: Colors.white,size: size.width*.09): null)
+                      )
+                  ),
+
+                ],
+              ),
             ),
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildRichText(Size size, IconData icon, String text) {
-    return Padding(
-      padding: const EdgeInsets.all(21.0),
-      child: Text.rich(
-        TextSpan(
-          children: [
-            WidgetSpan(
-              child: Icon(icon, color: Colors.white, size: size.width * .065),
-              alignment: PlaceholderAlignment.middle,
-            ),
-            TextSpan(
-              text: "  $text",
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.w900,
-                fontSize: size.width * .045,
-              ),
-            ),
-          ],
-        ),
-        textAlign: TextAlign.center,
-      ),
-    );
+    ));
   }
 }
